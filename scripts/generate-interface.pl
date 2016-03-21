@@ -81,6 +81,23 @@ sub generate_interface {
     }
 
     print $fh "%module $module\n";
+
+    print $fh <<'__END__';
+
+// perl short macro names conflict with common C++ macros
+// see http://www.swig.org/Doc3.0/Perl5.html#Perl5_nn9
+#ifdef SWIGPERL
+%{
+#undef do_open
+#undef do_close
+#undef filter_add
+#undef init_tm
+#undef seed
+%}
+#endif
+
+__END__
+
     print $fh "%{\n";
     print $fh "#include <$_>\n" for map {$shortened{$_}} @targets;
     print $fh "%}\n";
